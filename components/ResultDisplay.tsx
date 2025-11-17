@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { GenerationResult } from '../types';
 
@@ -5,10 +6,14 @@ interface ResultDisplayProps {
   result: GenerationResult;
   onRegenerate: () => void;
   onEditPrompt: () => void;
+  onExtend: () => void;
   isLoading: boolean;
 }
 
-export const ResultDisplay: React.FC<ResultDisplayProps> = ({ result, onRegenerate, onEditPrompt, isLoading }) => {
+const ExtendIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 20 20" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 8V4m0 0h4M4 4l5 5m-5 8v-4m0 0h4m-4 0l5-5m10-5h-4m0 0v4m0-4l-5 5m5 8h-4m0 0v-4m0 4l-5-5" /></svg>;
+
+
+export const ResultDisplay: React.FC<ResultDisplayProps> = ({ result, onRegenerate, onEditPrompt, onExtend, isLoading }) => {
   
   const handleDownload = () => {
     const link = document.createElement('a');
@@ -19,18 +24,10 @@ export const ResultDisplay: React.FC<ResultDisplayProps> = ({ result, onRegenera
     document.body.removeChild(link);
   };
   
-  const aspectRatioClass = {
-    '1:1': 'aspect-square',
-    '9:16': 'aspect-[9/16]',
-    '16:9': 'aspect-[16/9]',
-  }[result.aspectRatio] || 'aspect-square';
-  
-  const containerMaxWidthClass = result.aspectRatio === '9:16' ? 'max-w-sm' : 'w-full';
-
   return (
     <div className="glass-pane p-6 rounded-2xl w-full max-w-4xl animate-slide-in-up flex flex-col items-center gap-6">
-        <div className={`${aspectRatioClass} ${containerMaxWidthClass} bg-gray-900 rounded-lg overflow-hidden relative group border border-gray-700`}>
-            <img src={result.imageUrl} alt={result.originalPrompt} className="w-full h-full object-cover" />
+        <div className="w-full bg-gray-900 rounded-lg overflow-hidden relative group border border-gray-700 flex justify-center items-center">
+            <img src={result.imageUrl} alt={result.originalPrompt} className="w-auto h-auto max-w-full max-h-[70vh] object-contain" />
             {result.isEnhanced && (
             <div className="absolute top-3 right-3 bg-violet-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                 4K Enhanced
@@ -43,13 +40,22 @@ export const ResultDisplay: React.FC<ResultDisplayProps> = ({ result, onRegenera
               <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">✨ AI Boosted Prompt</h3>
               <p className="glass-pane !bg-gray-900/80 p-3 rounded-md text-gray-300 text-sm h-24 overflow-y-auto">{result.boostedPrompt}</p>
             </div>
-             <div className="pt-2 grid grid-cols-2 gap-4">
+             <div className="pt-2 grid grid-cols-3 gap-4">
                  <button 
                     onClick={handleDownload} 
                     className="w-full bg-indigo-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-indigo-500 transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-indigo-500"
                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                    <svg xmlns="http://www.w.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                     <span>Download</span>
+                </button>
+                 <button 
+                    onClick={onExtend} 
+                    disabled={isLoading}
+                    className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg font-semibold hover:bg-gray-600 transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-gray-500"
+                    aria-label="Extend Image"
+                 >
+                    <ExtendIcon />
+                    <span>Extend</span>
                 </button>
                 <button 
                   onClick={onRegenerate} 

@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
@@ -6,6 +7,7 @@ import { Loader } from './components/Loader';
 import { ResultDisplay } from './components/ResultDisplay';
 import { Gallery } from './components/Gallery';
 import { AuthModal } from './components/AuthModal';
+import { ExtendImageModal } from './components/ExtendImageModal';
 import AdBanner from './components/AdBanner';
 import AdBannerVertical from './components/AdBannerVertical';
 import { STYLE_PACKS } from './constants';
@@ -43,6 +45,7 @@ const App: React.FC = () => {
   const [galleryItems, setGalleryItems] = useState<GenerationResult[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
+  const [showExtendModal, setShowExtendModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -147,6 +150,27 @@ const App: React.FC = () => {
       setResolution(result.aspectRatio);
     }
   };
+  
+  const handleOpenExtend = () => {
+    if(result) setShowExtendModal(true);
+  }
+  
+  const handleApplyExtension = (newImageUrl: string) => {
+    if (!result) return;
+    
+    const newResult: GenerationResult = {
+        ...result,
+        id: new Date().toISOString(),
+        imageUrl: newImageUrl,
+        timestamp: new Date().toLocaleString(),
+    };
+    
+    setResult(newResult);
+    if (!galleryItems.some(item => item.id === newResult.id)) {
+        setGalleryItems(prevItems => [newResult, ...prevItems].slice(0, 20));
+    }
+    setShowExtendModal(false);
+  }
 
   const clearGallery = () => {
     setGalleryItems([]);
@@ -183,7 +207,7 @@ const App: React.FC = () => {
               {loading ? (
                 <Loader message={loadingMessage} />
               ) : result ? (
-                <ResultDisplay result={result} onRegenerate={handleRegenerate} onEditPrompt={handleEditPrompt} isLoading={loading} />
+                <ResultDisplay result={result} onRegenerate={handleRegenerate} onEditPrompt={handleEditPrompt} onExtend={handleOpenExtend} isLoading={loading} />
               ) : (
                 <div className="text-center p-8 glass-pane w-full max-w-2xl">
                   <h2 className="text-2xl font-bold text-gray-200">AI Art Studio</h2>
@@ -210,6 +234,13 @@ const App: React.FC = () => {
       </main>
 
       {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} onLoginSuccess={handleLogin} />}
+      {showExtendModal && result && (
+        <ExtendImageModal 
+            originalResult={result}
+            onClose={() => setShowExtendModal(false)}
+            onApply={handleApplyExtension}
+        />
+      )}
     </div>
   );
 };

@@ -1,0 +1,5 @@
+{
+  "name": "Prompt2Art – AI Creative Studio",
+  "description": "A web application where users can enter a text prompt, choose a style, and have an AI automatically boost the prompt and generate a unique, high-quality image. Features include style packs, a prompt booster, a side-by-side result viewer, and a personal gallery.",
+  "requestFramePermissions": []
+}

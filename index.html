@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prompt2Art – AI Creative Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+  }
+}
+</script>
+<style>
+  :root {
+    --bg-color-dark: #020617;
+    --bg-color-light: #1e1b4b;
+    --glow-color: #a78bfa; /* A lighter violet */
+    --border-color: rgba(255, 255, 255, 0.1);
+    --glass-bg: rgba(17, 24, 39, 0.6); /* gray-900 with opacity */
+  }
+
+  body {
+    background-color: var(--bg-color-dark);
+    background-image: radial-gradient(ellipse at top, var(--bg-color-light), var(--bg-color-dark));
+    background-attachment: fixed;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.2);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.2);
+  }
+  
+  /* Glassmorphism Pane */
+  .glass-pane {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem; /* lg */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  /* Glow on Hover Effect */
+  .glow-on-hover {
+    position: relative;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .glow-on-hover:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 1rem; /* Match parent's border-radius */
+    border: 2px solid transparent;
+    background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%) border-box;
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none; /* Make it non-interactive */
+  }
+  
+  .glow-on-hover:hover:before, .glow-on-hover.active:before {
+    opacity: 1;
+    animation: pulse-glow 2s infinite ease-in-out;
+  }
+
+  /* Keyframe Animations */
+  @keyframes pulse-glow {
+    0%, 100% {
+      filter: brightness(1) drop-shadow(0 0 3px var(--glow-color));
+    }
+    50% {
+      filter: brightness(1.5) drop-shadow(0 0 10px var(--glow-color));
+    }
+  }
+
+  @keyframes slide-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-in-up {
+    animation: slide-in-up 0.5s ease-out forwards;
+  }
+</style>
+</head>
+  <body class="bg-gray-900 text-white font-sans">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
